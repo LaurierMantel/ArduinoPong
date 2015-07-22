@@ -3,6 +3,9 @@
 #define startPin 6
 #define echoPin 7
 #define trigPin 8
+
+
+
 #define cinPin 9
 #define B1Pin 10
 #define B0Pin 11
@@ -13,8 +16,6 @@
 
 int inByte;
 
-boolean ledState = false;
-//char serialVal;
 
 short distance;
 short lastDistance = 0;
@@ -67,16 +68,19 @@ void loop()
    else if(inByte == 'G')//goal scored 
    {
     lives--;
-    ledState = true;
-    Serial.write(distance);
+    if(lives <= 0)
+    {
+      Serial.write('T');
+      
+    }
+    else
+    {
+      Serial.write(distance);
+    }
+    
    }
   }
 
-  
-  if(ledState)
-  {
-    digitalWrite(A0Pin, HIGH);
-  }
   
   //Getting data from sensor
   digitalWrite(trigPin, LOW); 
@@ -94,39 +98,67 @@ void loop()
   
   delay(50);
 
-//  if(lives > 0)
-//  {
-//    digitalWrite(A0Pin, HIGH);
-//    
-//    digitalWrite(B0Pin, HIGH);
-//    digitalWrite(B1Pin, HIGH);
-//    if(lives == 3)
-//    {
-//      digitalWrite(cinPin, HIGH);
-//      digitalWrite(A1Pin, HIGH);
-//    }
-//    else if(lives == 2)
-//    {
-//      digitalWrite(cinPin, LOW);
-//      digitalWrite(A1Pin, HIGH);
-//    }
-//    else
-//    {
-//      digitalWrite(cinPin, LOW);
-//      digitalWrite(A1Pin, LOW);
-//    }
-//    
-//  }
-//  else
-//  {
-//    for(int i = 9; i < 14; i++)
-//    {
-//      digitalWrite(i, LOW);
-//    }
-//  }
-  
-  
-  
+if(lives == 3)
+{
+    digitalWrite(A0Pin, HIGH);
+    digitalWrite(A1Pin, HIGH);
+    digitalWrite(B0Pin, HIGH);
+    digitalWrite(B1Pin, HIGH);
+    digitalWrite(cinPin, HIGH);
+}
+else if(lives == 2)
+{
+    digitalWrite(A0Pin, HIGH);
+    digitalWrite(A1Pin, HIGH);
+    digitalWrite(B0Pin, HIGH);
+    digitalWrite(B1Pin, HIGH);
+    digitalWrite(cinPin, LOW);
+}
+else if(lives == 1)
+{
+    digitalWrite(A0Pin, HIGH);
+    digitalWrite(A1Pin, LOW);
+    digitalWrite(B0Pin, HIGH);
+    digitalWrite(B1Pin, HIGH);
+    digitalWrite(cinPin, LOW);
+}
+
+
+else
+{
+    digitalWrite(A0Pin, LOW);
+    digitalWrite(A1Pin, LOW);
+    digitalWrite(B0Pin, LOW);
+    digitalWrite(B1Pin, LOW);
+    digitalWrite(cinPin, LOW);
+
+    for(int i = 0; i < 3; i++)
+    
+    {
+        delay(300);
+    
+        digitalWrite(A0Pin, HIGH);
+        digitalWrite(A1Pin, HIGH);
+        digitalWrite(B0Pin, HIGH);
+        digitalWrite(B1Pin, HIGH);
+        digitalWrite(cinPin, HIGH);
+    
+        delay(300);
+    
+        digitalWrite(A0Pin, LOW);
+        digitalWrite(A1Pin, LOW);
+        digitalWrite(B0Pin, LOW);
+        digitalWrite(B1Pin, LOW);
+        digitalWrite(cinPin, LOW);
+      
+    }
+
+    
+
+    delay(100);
+
+    lives = 3;
+}
 
 }
 

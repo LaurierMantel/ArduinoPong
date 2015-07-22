@@ -32,7 +32,6 @@ float rectanglePosY = 0;
 float rectangleHeight = 100;
 float rectangleWidth = 5;
 
-
 int fiveDisplay = 0;
 
 float speedLimit = 5.5;
@@ -58,6 +57,7 @@ void draw()
     {
       text("Press Green Button To Start",(width/2), height/2); //occurs in the case of a stop button
     }
+    
     else
     {
       text("PAUSED",width/2, height/2);
@@ -65,13 +65,15 @@ void draw()
   }
   else
   {
+    fill(0, 255, 255);
+    rect(rectanglePosX, rectanglePosY, rectangleWidth, rectangleHeight);
+    
     if (fiveDisplay > 0)
     {
       text("Speed Increase 5 %", imagePosX-20, imagePosY-20); 
       fiveDisplay--;
     }
-    fill(0, 255, 255);
-    rect(rectanglePosX, rectanglePosY, rectangleWidth, rectangleHeight);
+   
   
     if (abs(xDirection) + abs(yDirection) > speedLimit )
     {
@@ -93,7 +95,7 @@ void draw()
         fiveDisplay = 100;
       }
     } 
-    else if ((imagePosX-abs(xDirection) <= 0))
+    else if ((imagePosX-abs(xDirection) <= 0))  // what happens when a goal is scored  --> image position is less than 0 on the x axis
     {
       yDirection = random(3, 7)/10;
       xDirection = -1*sqrt(1-yDirection*yDirection);
@@ -147,9 +149,9 @@ void draw()
     
 }
 
-void serialEvent(Serial port)
+void serialEvent(Serial port)  // SERIAL COMMUNICATION FUNCTION
 {
-  println("Serial port event");
+  println("Serial port event"); //SERIAL HANDSHAKE
   int inByte = port.read();
   
   println(inByte);
@@ -169,9 +171,9 @@ void serialEvent(Serial port)
      println('N');
     }
   }
-  else
+  else    //DEFAULT READ
   {
-    if(inByte == 'S')
+    if(inByte == 'S')   //CHECKS CASES START, PAUSE, STOP
     {
       started = true;
       stopped = false; 
@@ -191,14 +193,14 @@ void serialEvent(Serial port)
      println("Stop Button");
      port.write('N');
     }
-    else if(goalScored)
+    else if(goalScored) // In the case of a goal scored, 
     {
       started = false;
       goalScored = false;
       port.write('G');
       println('G');
     }
-    else
+    else  //SETS PADDLE POSSITION BASED ON inByte value (100 multiplier for scale)
     {
        if(inByte > 2 && inByte < 8)
        {
