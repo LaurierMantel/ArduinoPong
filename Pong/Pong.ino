@@ -30,11 +30,14 @@ char goal;
 volatile short lives = 3;
 
 void setup() {
-  // put your setup code here, to run once:
 Serial.begin(9600);
+
+//buttons
 pinMode(stopPin, INPUT);
 pinMode(pausePin, INPUT);
 pinMode(startPin, INPUT);
+
+//communications with ultrasonic sensor
 pinMode(trigPin, OUTPUT);
 pinMode(echoPin, INPUT);
 
@@ -44,9 +47,9 @@ pinMode(B0Pin, OUTPUT);
 pinMode(A1Pin, OUTPUT);
 pinMode(A0Pin, OUTPUT);
 
+attachInterrupt(0, buttonPressed, RISING);
 
-
-attachInterrupt(0, buttonPressed, HIGH);
+//runs until applet responds and completes serial handshake
 establishContact();
 }
 
@@ -55,13 +58,13 @@ void loop()
 
   if(Serial.available() > 0)
   {
-    inByte = Serial.read();
+    inByte = Serial.read(); //initial handshake
     if(inByte == 'B')
     {
       Serial.write('C');
       
     }
-   else if(inByte == 'N')
+   else if(inByte == 'N') //default serial communication.  
    {
     Serial.write(distance); 
    }
@@ -81,6 +84,7 @@ void loop()
    }
   }
 
+//we send single characters so that messages do not get cut off during interrupt
   
   //Getting data from sensor
   digitalWrite(trigPin, LOW); 
@@ -96,7 +100,7 @@ void loop()
  // Serial.println(distance);
 
   
-  delay(50);
+  delay(50); //allows time for serial communications from applet
 
 if(lives == 3)
 {
@@ -132,8 +136,7 @@ else
     digitalWrite(B1Pin, LOW);
     digitalWrite(cinPin, LOW);
 
-    for(int i = 0; i < 3; i++)
-    
+    for(int i = 0; i < 3; i++) //losing message (flash light 3 times)
     {
         delay(300);
     
@@ -195,9 +198,9 @@ void buttonPressed()
 
 void establishContact() 
 {
-  while (Serial.available() <= 0) 
+  while (Serial.available() <= 0) // Serial.available() checks 
   {
-    Serial.write('A');   // send a capital A
+    Serial.write('A');   // send a capital A, keeps writing until applet hears the capital A
     delay(300);
   }
 }
